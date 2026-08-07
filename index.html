@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Friends Calendar</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+  <script
+    type="module"
+    src="script.js"
+  ></script>
+
+</head>
+
+
+<body>
+
+
+  <!-- =====================================
+       FRIEND LOGIN
+  ====================================== -->
+
+  <main
+    id="loginView"
+    class="login-view"
+  >
+
+    <section class="login-card">
+
+      <div class="login-heading">
+
+        <p class="eyebrow">
+          friends calendar
+        </p>
+
+        <h1>
+          when are we free?
+        </h1>
+
+        <p class="login-description">
+          enter your name to continue
+        </p>
+
+      </div>
+
+
+      <form
+        id="friendLoginForm"
+        class="login-form"
+      >
+
+        <label>
+
+          Your name
+
+          <input
+            id="friendNameInput"
+            type="text"
+            maxlength="40"
+            autocomplete="off"
+            placeholder="e.g. mark"
+            required
+          />
+
+        </label>
+
+
+        <p
+          id="loginMessage"
+          class="form-message"
+          aria-live="polite"
+        ></p>
+
+
+        <button
+          id="loginButton"
+          class="primary-button full-button"
+          type="submit"
+        >
+          Continue
+        </button>
+
+      </form>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =====================================
+       FRIEND CALENDAR
+  ====================================== -->
+
+  <main
+    id="appView"
+    class="app-shell hidden"
+  >
+
+
+    <!-- ACCOUNT BAR -->
+
+    <header class="top-bar">
+
+      <div class="account-info">
+
+        <div class="avatar">
+          ♢
+        </div>
+
+        <div>
+
+          <strong id="currentFriendName">
+            friend
+          </strong>
+
+          <span>
+            friend calendar
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="account-actions">
+
+        <span
+          id="syncStatus"
+          class="sync-status"
+        >
+          ● synced
+        </span>
+
+
+        <button
+          id="logoutButton"
+          class="secondary-button"
+          type="button"
+        >
+          Switch user
+        </button>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- MONTH HEADER -->
+
+    <header class="calendar-header">
+
+      <div>
+
+        <p class="eyebrow">
+          cj's availability
+        </p>
+
+        <h1 id="monthLabel">
+          August 2026
+        </h1>
+
+      </div>
+
+
+      <div class="month-controls">
+
+        <button
+          id="previousMonth"
+          class="icon-button"
+          type="button"
+          aria-label="Previous month"
+        >
+          ←
+        </button>
+
+
+        <button
+          id="todayButton"
+          class="secondary-button"
+          type="button"
+        >
+          Today
+        </button>
+
+
+        <button
+          id="nextMonth"
+          class="icon-button"
+          type="button"
+          aria-label="Next month"
+        >
+          →
+        </button>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- CALENDAR -->
+
+    <section class="calendar-wrapper">
+
+      <div class="calendar">
+
+        <div class="weekdays">
+
+          <div>
+            <span class="weekday-full">Monday</span>
+            <span class="weekday-short">M</span>
+          </div>
+
+          <div>
+            <span class="weekday-full">Tuesday</span>
+            <span class="weekday-short">T</span>
+          </div>
+
+          <div>
+            <span class="weekday-full">Wednesday</span>
+            <span class="weekday-short">W</span>
+          </div>
+
+          <div>
+            <span class="weekday-full">Thursday</span>
+            <span class="weekday-short">T</span>
+          </div>
+
+          <div>
+            <span class="weekday-full">Friday</span>
+            <span class="weekday-short">F</span>
+          </div>
+
+          <div>
+            <span class="weekday-full">Saturday</span>
+            <span class="weekday-short">S</span>
+          </div>
+
+          <div>
+            <span class="weekday-full">Sunday</span>
+            <span class="weekday-short">S</span>
+          </div>
+
+        </div>
+
+
+        <div
+          id="calendarDays"
+          class="calendar-days"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <p class="page-note">
+      select a date to see when cj is free
+    </p>
+
+  </main>
+
+
+
+  <!-- =====================================
+       DAILY VIEW
+  ====================================== -->
+
+  <div
+    id="dayModal"
+    class="modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dayTitle"
+  >
+
+    <div class="modal-panel day-panel">
+
+      <header class="modal-header sticky-header">
+
+        <div>
+
+          <p class="eyebrow">
+            daily schedule
+          </p>
+
+          <h2 id="dayTitle">
+            Monday, 3 August 2026
+          </h2>
+
+        </div>
+
+
+        <div class="header-actions">
+
+          <button
+            id="addPlanButton"
+            class="secondary-button"
+            type="button"
+          >
+            Add a plan
+          </button>
+
+
+          <button
+            id="closeDayModal"
+            class="icon-button"
+            type="button"
+            aria-label="Close daily calendar"
+          >
+            ×
+          </button>
+
+        </div>
+
+      </header>
+
+
+
+      <div class="timeline-key">
+
+        <span>
+          <i class="legend-dot work-dot"></i>
+          Work
+        </span>
+
+
+        <span>
+          <i class="legend-dot busy-dot"></i>
+          Busy
+        </span>
+
+
+        <span>
+          <i class="legend-dot private-dot"></i>
+          Existing plan
+        </span>
+
+
+        <span>
+          <i class="legend-dot friend-dot"></i>
+          Friend plan
+        </span>
+
+      </div>
+
+
+
+      <div
+        id="timeline"
+        class="timeline"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================
+       PRIVATE / READ-ONLY EVENT
+  ====================================== -->
+
+  <div
+    id="infoModal"
+    class="modal info-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="infoTitle"
+  >
+
+    <div class="modal-panel info-panel">
+
+      <header class="modal-header">
+
+        <div>
+
+          <p class="eyebrow">
+            calendar event
+          </p>
+
+          <h2 id="infoTitle">
+            Event
+          </h2>
+
+        </div>
+
+
+        <button
+          id="closeInfoModal"
+          class="icon-button"
+          type="button"
+          aria-label="Close event"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="info-content">
+
+        <div class="info-row">
+
+          <span class="info-label">
+            Date
+          </span>
+
+          <strong id="infoDate"></strong>
+
+        </div>
+
+
+        <div class="info-row">
+
+          <span class="info-label">
+            Time
+          </span>
+
+          <strong id="infoTime"></strong>
+
+        </div>
+
+
+        <p
+          id="privateMessage"
+          class="privacy-note hidden"
+        >
+          This event's details are private.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================
+       FRIEND EVENT EDITOR
+  ====================================== -->
+
+  <div
+    id="eventModal"
+    class="modal editor-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="editorHeading"
+  >
+
+    <div class="modal-panel editor-panel">
+
+      <header class="modal-header">
+
+        <div>
+
+          <p
+            id="editorLabel"
+            class="eyebrow"
+          >
+            propose a plan
+          </p>
+
+
+          <h2 id="editorHeading">
+            Add an event
+          </h2>
+
+        </div>
+
+
+        <button
+          id="closeEventModal"
+          class="icon-button"
+          type="button"
+          aria-label="Close editor"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+
+      <form
+        id="eventForm"
+        class="event-form"
+      >
+
+
+        <!-- TEMPLATE -->
+
+        <label>
+
+          Template
+
+          <select
+            id="templateSelect"
+            required
+          >
+
+            <option value="">
+              Select a template
+            </option>
+
+
+            <!-- HANG OUT -->
+
+            <optgroup label="♢ hang out">
+
+              <option value="hangout">
+                Hangout
+              </option>
+
+              <option value="eat-out">
+                Eat out
+              </option>
+
+              <option value="movie">
+                Movie
+              </option>
+
+              <option value="game-night">
+                Game night
+              </option>
+
+              <option value="friends-game-night">
+                Game night with friends
+              </option>
+
+            </optgroup>
+
+
+            <!-- CHILL -->
+
+            <optgroup label="☾ chill">
+
+              <option value="walk">
+                Walk
+              </option>
+
+              <option value="cozy-hangout">
+                Cozy hangout
+              </option>
+
+              <option value="creative-activity">
+                Creative activity
+              </option>
+
+              <option value="quiet-hangout">
+                Quiet hangout
+              </option>
+
+            </optgroup>
+
+
+            <!-- ACTIVITIES -->
+
+            <optgroup label="♧ activities">
+
+              <option value="karaoke">
+                Karaoke
+              </option>
+
+              <option value="ice-skating">
+                Ice skating
+              </option>
+
+              <option value="bouldering">
+                Bouldering
+              </option>
+
+              <option value="gym">
+                Gym
+              </option>
+
+              <option value="run-jog">
+                Run / jog
+              </option>
+
+              <option value="try-something-new">
+                Try something new
+              </option>
+
+            </optgroup>
+
+
+            <!-- OTHER -->
+
+            <optgroup label="＋ other">
+
+              <option value="custom">
+                Custom event
+              </option>
+
+            </optgroup>
+
+          </select>
+
+        </label>
+
+
+
+        <!-- CUSTOM TITLE -->
+
+        <label
+          id="customTitleField"
+          class="hidden"
+        >
+
+          Event name
+
+          <input
+            id="customEventTitle"
+            type="text"
+            maxlength="80"
+            placeholder="e.g. beach, picnic, markets..."
+          />
+
+        </label>
+
+
+
+        <!-- DATE -->
+
+        <label>
+
+          Select date
+
+          <span class="date-input-wrapper">
+
+            <input
+              id="eventDate"
+              type="date"
+              required
+            />
+
+          </span>
+
+        </label>
+
+
+
+        <!-- TIMES -->
+
+        <div class="time-fields">
+
+          <label>
+
+            Start time
+
+            <select
+              id="startTime"
+              required
+            ></select>
+
+          </label>
+
+
+          <label>
+
+            End time
+
+            <select
+              id="endTime"
+              required
+            ></select>
+
+          </label>
+
+        </div>
+
+
+
+        <!-- NOTES -->
+
+        <label>
+
+          Add notes
+
+          <textarea
+            id="eventNotes"
+            rows="4"
+            maxlength="500"
+            placeholder="add any details..."
+          ></textarea>
+
+        </label>
+
+
+
+        <p
+          id="formMessage"
+          class="form-message"
+          aria-live="polite"
+        ></p>
+
+
+
+        <div class="form-actions">
+
+          <button
+            id="deleteEvent"
+            class="danger-button hidden"
+            type="button"
+          >
+            Delete
+          </button>
+
+
+          <div class="right-actions">
+
+            <button
+              id="cancelEditor"
+              class="secondary-button"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="saveEventButton"
+              class="primary-button"
+              type="submit"
+            >
+              Add event
+            </button>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+</body>
+
+</html>
