@@ -1,3090 +1,411 @@
-import {
-  createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+const SUPABASE_URL = "https://uyofqzrgyubdsgheuhbl.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_TOj9Iqr3gRFktXxvzYA7kQ_g9-edYzp";
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: false }
+});
 
-/* =====================================
-   SUPABASE
-===================================== */
-
-const SUPABASE_URL =
-  "https://uyofqzrgyubdsgheuhbl.supabase.co";
-
-
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_TOj9Iqr3gRFktXxvzYA7kQ_g9-edYzp";
-
-
-const supabase =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
-
-
-
-/* =====================================
-   LOCAL FRIEND IDENTITY
-===================================== */
-
-const FRIEND_STORAGE_KEY =
-  "friends_calendar_identity_v1";
-
-
-
-/* =====================================
-   TEMPLATE DEFINITIONS
-===================================== */
-
-const templates = {
-
-  /* HANG OUT */
-
-  hangout: {
-    title: "Hangout",
-    duration: 180
-  },
-
-
-  "eat-out": {
-    title: "Eat out",
-    duration: 120
-  },
-
-
-  movie: {
-    title: "Movie",
-    duration: 180
-  },
-
-
-  "game-night": {
-    title: "Game night",
-    duration: 180
-  },
-
-
-  "friends-game-night": {
-    title: "Game night with friends",
-    duration: 240
-  },
-
-
-  /* CHILL */
-
-  walk: {
-    title: "Walk",
-    duration: 90
-  },
-
-
-  "cozy-hangout": {
-    title: "Cozy hangout",
-    duration: 120
-  },
-
-
-  "creative-activity": {
-    title: "Creative activity",
-    duration: 120
-  },
-
-
-  "quiet-hangout": {
-    title: "Quiet hangout",
-    duration: 90
-  },
-
-
-  /* ACTIVITIES */
-
-  karaoke: {
-    title: "Karaoke",
-    duration: 120
-  },
-
-
-  "ice-skating": {
-    title: "Ice skating",
-    duration: 120
-  },
-
-
-  bouldering: {
-    title: "Bouldering",
-    duration: 120
-  },
-
-
-  gym: {
-    title: "Gym",
-    duration: 90
-  },
-
-
-  "run-jog": {
-    title: "Run / jog",
-    duration: 60
-  },
-
-
-  "try-something-new": {
-    title: "Try something new",
-    duration: 180
-  },
-
-
-  /* OTHER */
-
-  custom: {
-    title: "",
-    duration: 60
-  }
-
-};
-
-
-
-/* =====================================
-   APP STATE
-===================================== */
+const $ = (selector) => document.querySelector(selector);
+const createView = $("#createView");
+const pollView = $("#pollView");
+const errorView = $("#errorView");
+const createForm = $("#createForm");
+const titleInput = $("#titleInput");
+const startDateInput = $("#startDateInput");
+const endDateInput = $("#endDateInput");
+const dayStartInput = $("#dayStartInput");
+const dayEndInput = $("#dayEndInput");
+const slotMinutesInput = $("#slotMinutesInput");
+const slotPreview = $("#slotPreview");
+const createMessage = $("#createMessage");
+const createButton = $("#createButton");
+const pollTitle = $("#pollTitle");
+const pollMeta = $("#pollMeta");
+const copyLinkButton = $("#copyLinkButton");
+const newPollButton = $("#newPollButton");
+const resultsPanel = $("#resultsPanel");
+const responseCountBadge = $("#responseCountBadge");
+const bestTimes = $("#bestTimes");
+const participantNameInput = $("#participantNameInput");
+const slotGroups = $("#slotGroups");
+const voteMessage = $("#voteMessage");
+const selectedCount = $("#selectedCount");
+const saveResponseButton = $("#saveResponseButton");
+const toast = $("#toast");
 
 const state = {
-
-  currentDate:
-    new Date(),
-
-  selectedDate:
-    null,
-
-  editingId:
-    null,
-
-  friend:
-    null,
-
-  items:
-    [],
-
-  refreshTimer:
-    null
-
+  pollToken: null,
+  poll: null,
+  selectedSlotIds: new Set(),
+  participantToken: null
 };
 
-
-
-/* =====================================
-   LOGIN ELEMENTS
-===================================== */
-
-const loginView =
-  document.querySelector(
-    "#loginView"
-  );
-
-
-const appView =
-  document.querySelector(
-    "#appView"
-  );
-
-
-const friendLoginForm =
-  document.querySelector(
-    "#friendLoginForm"
-  );
-
-
-const friendNameInput =
-  document.querySelector(
-    "#friendNameInput"
-  );
-
-
-const loginButton =
-  document.querySelector(
-    "#loginButton"
-  );
-
-
-const loginMessage =
-  document.querySelector(
-    "#loginMessage"
-  );
-
-
-const currentFriendName =
-  document.querySelector(
-    "#currentFriendName"
-  );
-
-
-const logoutButton =
-  document.querySelector(
-    "#logoutButton"
-  );
-
-
-const syncStatus =
-  document.querySelector(
-    "#syncStatus"
-  );
-
-
-
-/* =====================================
-   MONTH ELEMENTS
-===================================== */
-
-const monthLabel =
-  document.querySelector(
-    "#monthLabel"
-  );
-
-
-const calendarDays =
-  document.querySelector(
-    "#calendarDays"
-  );
-
-
-const previousMonthButton =
-  document.querySelector(
-    "#previousMonth"
-  );
-
-
-const nextMonthButton =
-  document.querySelector(
-    "#nextMonth"
-  );
-
-
-const todayButton =
-  document.querySelector(
-    "#todayButton"
-  );
-
-
-
-/* =====================================
-   DAY ELEMENTS
-===================================== */
-
-const dayModal =
-  document.querySelector(
-    "#dayModal"
-  );
-
-
-const dayTitle =
-  document.querySelector(
-    "#dayTitle"
-  );
-
-
-const timeline =
-  document.querySelector(
-    "#timeline"
-  );
-
-
-const addPlanButton =
-  document.querySelector(
-    "#addPlanButton"
-  );
-
-
-const closeDayModalButton =
-  document.querySelector(
-    "#closeDayModal"
-  );
-
-
-
-/* =====================================
-   INFO MODAL
-===================================== */
-
-const infoModal =
-  document.querySelector(
-    "#infoModal"
-  );
-
-
-const infoTitle =
-  document.querySelector(
-    "#infoTitle"
-  );
-
-
-const infoDate =
-  document.querySelector(
-    "#infoDate"
-  );
-
-
-const infoTime =
-  document.querySelector(
-    "#infoTime"
-  );
-
-
-const privateMessage =
-  document.querySelector(
-    "#privateMessage"
-  );
-
-
-const closeInfoModalButton =
-  document.querySelector(
-    "#closeInfoModal"
-  );
-
-
-
-/* =====================================
-   EDITOR ELEMENTS
-===================================== */
-
-const eventModal =
-  document.querySelector(
-    "#eventModal"
-  );
-
-
-const eventForm =
-  document.querySelector(
-    "#eventForm"
-  );
-
-
-const editorLabel =
-  document.querySelector(
-    "#editorLabel"
-  );
-
-
-const editorHeading =
-  document.querySelector(
-    "#editorHeading"
-  );
-
-
-const templateSelect =
-  document.querySelector(
-    "#templateSelect"
-  );
-
-
-const customTitleField =
-  document.querySelector(
-    "#customTitleField"
-  );
-
-
-const customEventTitle =
-  document.querySelector(
-    "#customEventTitle"
-  );
-
-
-const eventDateInput =
-  document.querySelector(
-    "#eventDate"
-  );
-
-
-const startTimeSelect =
-  document.querySelector(
-    "#startTime"
-  );
-
-
-const endTimeSelect =
-  document.querySelector(
-    "#endTime"
-  );
-
-
-const notesInput =
-  document.querySelector(
-    "#eventNotes"
-  );
-
-
-const formMessage =
-  document.querySelector(
-    "#formMessage"
-  );
-
-
-const cancelEditorButton =
-  document.querySelector(
-    "#cancelEditor"
-  );
-
-
-const closeEventModalButton =
-  document.querySelector(
-    "#closeEventModal"
-  );
-
-
-const saveEventButton =
-  document.querySelector(
-    "#saveEventButton"
-  );
-
-
-const deleteEventButton =
-  document.querySelector(
-    "#deleteEvent"
-  );
-
-
-
-/* =====================================
-   START
-===================================== */
-
-buildTimeOptions();
-
-attachEventListeners();
-
-boot();
-
-
-
-/* =====================================
-   BOOT
-===================================== */
-
-async function boot() {
-
-  const savedFriend =
-    loadSavedFriend();
-
-
-  if (
-    savedFriend?.displayName
-  ) {
-
-    const validFriend =
-      await findFriendByName(
-        savedFriend.displayName
-      );
-
-
-    if (
-      validFriend
-    ) {
-
-      await enterCalendar(
-        validFriend
-      );
-
-
-      return;
-
-    }
-
-
-    clearSavedFriend();
-
-  }
-
-
-  showLogin();
-
+init();
+
+function init() {
+  seedDates();
+  wireEvents();
+  const token = new URLSearchParams(window.location.search).get("poll");
+  if (token) loadPoll(token);
+  else showView("create");
+  updatePreview();
 }
 
-
-
-/* =====================================
-   EVENT LISTENERS
-===================================== */
-
-function attachEventListeners() {
-
-  friendLoginForm
-    .addEventListener(
-      "submit",
-      loginFriend
-    );
-
-
-  logoutButton
-    .addEventListener(
-      "click",
-      logoutFriend
-    );
-
-
-  previousMonthButton
-    .addEventListener(
-      "click",
-      () => {
-
-        state.currentDate =
-          new Date(
-
-            state.currentDate
-              .getFullYear(),
-
-            state.currentDate
-              .getMonth() - 1,
-
-            1
-
-          );
-
-
-        renderCalendar();
-
-      }
-    );
-
-
-  nextMonthButton
-    .addEventListener(
-      "click",
-      () => {
-
-        state.currentDate =
-          new Date(
-
-            state.currentDate
-              .getFullYear(),
-
-            state.currentDate
-              .getMonth() + 1,
-
-            1
-
-          );
-
-
-        renderCalendar();
-
-      }
-    );
-
-
-  todayButton
-    .addEventListener(
-      "click",
-      () => {
-
-        state.currentDate =
-          new Date();
-
-
-        renderCalendar();
-
-      }
-    );
-
-
-  closeDayModalButton
-    .addEventListener(
-      "click",
-      closeDayView
-    );
-
-
-  addPlanButton
-    .addEventListener(
-      "click",
-      () => {
-
-        openEditor({
-          start:
-            "18:00",
-
-          end:
-            "19:00"
-        });
-
-      }
-    );
-
-
-  closeInfoModalButton
-    .addEventListener(
-      "click",
-      closeInfoModal
-    );
-
-
-  closeEventModalButton
-    .addEventListener(
-      "click",
-      closeEditor
-    );
-
-
-  cancelEditorButton
-    .addEventListener(
-      "click",
-      closeEditor
-    );
-
-
-  deleteEventButton
-    .addEventListener(
-      "click",
-      deleteCurrentEvent
-    );
-
-
-  templateSelect
-    .addEventListener(
-      "change",
-      () => {
-
-        updateCustomTitleField();
-
-        applyTemplateDuration();
-
-      }
-    );
-
-
-  startTimeSelect
-    .addEventListener(
-      "change",
-      () => {
-
-        if (
-          templateSelect.value
-        ) {
-
-          applyTemplateDuration();
-
-        }
-
-      }
-    );
-
-
-  eventForm
-    .addEventListener(
-      "submit",
-      saveEvent
-    );
-
-
-  dayModal
-    .addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target ===
-          dayModal
-        ) {
-
-          closeDayView();
-
-        }
-
-      }
-    );
-
-
-  infoModal
-    .addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target ===
-          infoModal
-        ) {
-
-          closeInfoModal();
-
-        }
-
-      }
-    );
-
-
-  eventModal
-    .addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target ===
-          eventModal
-        ) {
-
-          closeEditor();
-
-        }
-
-      }
-    );
-
-
-  document
-    .addEventListener(
-      "keydown",
-      event => {
-
-        if (
-          event.key !==
-          "Escape"
-        ) {
-
-          return;
-
-        }
-
-
-        if (
-          !eventModal
-            .classList
-            .contains(
-              "hidden"
-            )
-        ) {
-
-          closeEditor();
-
-          return;
-
-        }
-
-
-        if (
-          !infoModal
-            .classList
-            .contains(
-              "hidden"
-            )
-        ) {
-
-          closeInfoModal();
-
-          return;
-
-        }
-
-
-        if (
-          !dayModal
-            .classList
-            .contains(
-              "hidden"
-            )
-        ) {
-
-          closeDayView();
-
-        }
-
-      }
-    );
-
-
-  window.addEventListener(
-    "focus",
-    async () => {
-
-      if (
-        state.friend
-      ) {
-
-        await refreshCalendar();
-
-      }
-
-    }
-  );
-
+function wireEvents() {
+  createForm.addEventListener("submit", createPoll);
+  [startDateInput, endDateInput, dayStartInput, dayEndInput, slotMinutesInput]
+    .forEach((el) => el.addEventListener("input", updatePreview));
+  copyLinkButton.addEventListener("click", copyCurrentLink);
+  newPollButton.addEventListener("click", () => {
+    history.pushState({}, "", window.location.pathname);
+    resetPollState();
+    showView("create");
+  });
+  saveResponseButton.addEventListener("click", saveResponse);
+  window.addEventListener("popstate", () => {
+    const token = new URLSearchParams(window.location.search).get("poll");
+    if (token) loadPoll(token);
+    else showView("create");
+  });
 }
 
+function seedDates() {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const dayAfter = new Date(today);
+  dayAfter.setDate(today.getDate() + 2);
+  startDateInput.value = toDateInput(tomorrow);
+  endDateInput.value = toDateInput(dayAfter);
+}
 
+function toDateInput(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
-/* =====================================
-   FRIEND LOGIN
-===================================== */
+function showView(name) {
+  createView.classList.toggle("hidden", name !== "create");
+  pollView.classList.toggle("hidden", name !== "poll");
+  errorView.classList.toggle("hidden", name !== "error");
+}
 
-async function loginFriend(
-  event
-) {
-
-  event.preventDefault();
-
-
-  loginMessage.textContent =
-    "";
-
-
-  loginButton.disabled =
-    true;
-
-
-  loginButton.textContent =
-    "Checking...";
-
-
-  const name =
-    friendNameInput
-      .value
-      .trim();
-
-
-  const friend =
-    await findFriendByName(
-      name
-    );
-
-
-  if (
-    !friend
-  ) {
-
-    loginMessage.textContent =
-      "That name is not on the calendar list.";
-
-
-    loginButton.disabled =
-      false;
-
-
-    loginButton.textContent =
-      "Continue";
-
-
+function updatePreview() {
+  const result = buildSlotsFromForm();
+  if (result.error) {
+    slotPreview.textContent = result.error;
     return;
+  }
+  const dayCount = countInclusiveDays(startDateInput.value, endDateInput.value);
+  slotPreview.textContent = `${result.slots.length} time blocks across ${dayCount} ${dayCount === 1 ? "day" : "days"}. Guests will see times in their own device timezone.`;
+}
 
+function buildSlotsFromForm() {
+  const startDate = startDateInput.value;
+  const endDate = endDateInput.value;
+  const startTime = dayStartInput.value;
+  const endTime = dayEndInput.value;
+  const minutes = Number(slotMinutesInput.value);
+
+  if (!startDate || !endDate || !startTime || !endTime) return { error: "Choose the date and time range." };
+  if (endDate < startDate) return { error: "Last date must be after the first date." };
+
+  const dayCount = countInclusiveDays(startDate, endDate);
+  if (dayCount < 1 || dayCount > 7) return { error: "Keep this MVP poll between 1 and 7 days." };
+
+  const startMinute = timeToMinutes(startTime);
+  const endMinute = timeToMinutes(endTime);
+  if (endMinute <= startMinute) return { error: "The daily end time must be later than the start time." };
+  if (!Number.isFinite(minutes) || minutes < 30) return { error: "Choose a valid time block length." };
+
+  const slots = [];
+  for (let offset = 0; offset < dayCount; offset += 1) {
+    const date = parseLocalDate(startDate);
+    date.setDate(date.getDate() + offset);
+    for (let minute = startMinute; minute + minutes <= endMinute; minute += minutes) {
+      const start = new Date(date);
+      start.setHours(Math.floor(minute / 60), minute % 60, 0, 0);
+      const end = new Date(start.getTime() + minutes * 60_000);
+      slots.push({ starts_at: start.toISOString(), ends_at: end.toISOString() });
+    }
   }
 
-
-  saveFriend(
-    friend
-  );
-
-
-  await enterCalendar(
-    friend
-  );
-
-
-  loginButton.disabled =
-    false;
-
-
-  loginButton.textContent =
-    "Continue";
-
+  if (slots.length < 2) return { error: "Create at least two time blocks." };
+  if (slots.length > 60) return { error: `That creates ${slots.length} blocks. Reduce the date range or increase the block length (maximum 60).` };
+  return { slots };
 }
 
+function parseLocalDate(value) {
+  const [y, m, d] = value.split("-").map(Number);
+  return new Date(y, m - 1, d, 12, 0, 0, 0);
+}
 
+function countInclusiveDays(start, end) {
+  const a = parseLocalDate(start);
+  const b = parseLocalDate(end);
+  return Math.floor((b - a) / 86_400_000) + 1;
+}
 
-/* =====================================
-   FIND FRIEND
-===================================== */
+function timeToMinutes(value) {
+  const [h, m] = value.split(":").map(Number);
+  return h * 60 + m;
+}
 
-async function findFriendByName(
-  name
-) {
-
-  if (
-    !name
-  ) {
-
-    return null;
-
+async function createPoll(event) {
+  event.preventDefault();
+  createMessage.textContent = "";
+  const built = buildSlotsFromForm();
+  if (built.error) {
+    createMessage.textContent = built.error;
+    return;
   }
 
+  createButton.disabled = true;
+  createButton.textContent = "Creating…";
 
-  const {
-    data,
-    error
-  } =
-    await supabase
-      .rpc(
-        "friend_login",
-        {
-          p_name:
-            name
-        }
-      );
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Australia/Perth";
+  const { data, error } = await supabase.rpc("create_availability_poll", {
+    p_title: titleInput.value.trim(),
+    p_timezone: timezone,
+    p_slots: built.slots
+  });
 
+  createButton.disabled = false;
+  createButton.innerHTML = "Create share link <span>↗</span>";
 
-  if (
-    error
-  ) {
-
-    console.error(
-      "Friend login error:",
-      error
-    );
-
-
-    return null;
-
+  if (error || !data) {
+    console.error(error);
+    createMessage.textContent = friendlyError(error, "Could not create the poll. Try again.");
+    return;
   }
 
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.searchParams.set("poll", data);
+  history.pushState({}, "", url);
+  await loadPoll(data);
+  showToast("Poll created — copy the link and send it to your friends.");
+}
 
-  const row =
-    data?.[0];
+async function loadPoll(token) {
+  resetPollState();
+  state.pollToken = token;
+  showView("poll");
+  pollTitle.textContent = "Loading…";
+  pollMeta.textContent = "";
+  slotGroups.innerHTML = "";
+  resultsPanel.classList.add("hidden");
 
-
-  if (
-    !row
-  ) {
-
-    return null;
-
+  const { data, error } = await supabase.rpc("get_availability_poll", { p_token: token });
+  if (error || !data) {
+    console.error(error);
+    showView("error");
+    return;
   }
 
-
-  return {
-
-    id:
-      row.friend_id,
-
-    displayName:
-      row.display_name
-
-  };
-
+  state.poll = data;
+  state.participantToken = localStorage.getItem(participantStorageKey(token));
+  if (state.participantToken) await loadSavedResponse();
+  renderPoll();
 }
 
+async function loadSavedResponse() {
+  const { data, error } = await supabase.rpc("get_availability_response", {
+    p_token: state.pollToken,
+    p_participant_token: state.participantToken
+  });
 
+  if (error || !data) {
+    localStorage.removeItem(participantStorageKey(state.pollToken));
+    state.participantToken = null;
+    return;
+  }
 
-/* =====================================
-   ENTER CALENDAR
-===================================== */
-
-async function enterCalendar(
-  friend
-) {
-
-  state.friend =
-    friend;
-
-
-  currentFriendName.textContent =
-    friend.displayName;
-
-
-  loginView.classList.add(
-    "hidden"
-  );
-
-
-  appView.classList.remove(
-    "hidden"
-  );
-
-
-  await refreshCalendar();
-
-
-  startAutoRefresh();
-
+  participantNameInput.value = data.name || "";
+  state.selectedSlotIds = new Set((data.slot_ids || []).map(Number));
 }
 
-
-
-/* =====================================
-   LOG OUT / SWITCH USER
-===================================== */
-
-function logoutFriend() {
-
-  stopAutoRefresh();
-
-
-  state.friend =
-    null;
-
-
-  state.items =
-    [];
-
-
-  clearSavedFriend();
-
-
-  closeEditor();
-
-  closeInfoModal();
-
-  closeDayView();
-
-
-  showLogin();
-
+function renderPoll() {
+  pollTitle.textContent = state.poll.title;
+  const slotCount = state.poll.slots?.length || 0;
+  pollMeta.textContent = `${slotCount} options · created in ${state.poll.timezone} · shown here in ${Intl.DateTimeFormat().resolvedOptions().timeZone || "your local timezone"}`;
+  renderResults();
+  renderSlotGroups();
+  updateSelectedCount();
 }
 
+function renderResults() {
+  const participantCount = Number(state.poll.participant_count || 0);
+  responseCountBadge.textContent = `${participantCount} ${participantCount === 1 ? "response" : "responses"}`;
 
+  if (participantCount === 0) {
+    resultsPanel.classList.add("hidden");
+    bestTimes.innerHTML = "";
+    return;
+  }
 
-/* =====================================
-   SHOW LOGIN
-===================================== */
+  const ranked = [...state.poll.slots]
+    .sort((a, b) => Number(b.available_count) - Number(a.available_count) || new Date(a.starts_at) - new Date(b.starts_at))
+    .slice(0, 3);
 
-function showLogin() {
+  bestTimes.innerHTML = ranked.map((slot, index) => {
+    const names = slot.available_names || [];
+    return `
+      <article class="best-time rank-${index + 1}">
+        <span class="rank">#${index + 1}</span>
+        <strong>${escapeHtml(formatSlotDate(slot))}</strong>
+        <p>${Number(slot.available_count)} available${names.length ? ` · ${escapeHtml(names.join(", "))}` : ""}</p>
+      </article>`;
+  }).join("");
 
-  appView.classList.add(
-    "hidden"
-  );
-
-
-  loginView.classList.remove(
-    "hidden"
-  );
-
-
-  friendNameInput.value =
-    "";
-
-
-  loginMessage.textContent =
-    "";
-
+  resultsPanel.classList.remove("hidden");
 }
 
+function renderSlotGroups() {
+  const groups = new Map();
+  for (const slot of state.poll.slots || []) {
+    const key = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "short", day: "numeric" }).format(new Date(slot.starts_at));
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(slot);
+  }
 
+  const bestIds = new Set([...state.poll.slots]
+    .sort((a, b) => Number(b.available_count) - Number(a.available_count) || new Date(a.starts_at) - new Date(b.starts_at))
+    .slice(0, state.poll.participant_count > 0 ? 3 : 0)
+    .map((slot) => Number(slot.id)));
 
-/* =====================================
-   SAVE FRIEND LOCALLY
-===================================== */
+  slotGroups.innerHTML = [...groups.entries()].map(([label, slots]) => `
+    <section class="slot-group">
+      <h3>${escapeHtml(label)}</h3>
+      <div class="slot-list">
+        ${slots.map((slot) => {
+          const id = Number(slot.id);
+          const selected = state.selectedSlotIds.has(id);
+          const names = slot.available_names || [];
+          return `<button class="slot-button ${selected ? "selected" : ""} ${bestIds.has(id) ? "best" : ""}" type="button" data-slot-id="${id}" aria-pressed="${selected}">
+            <strong>${escapeHtml(formatTimeRange(slot))}</strong>
+            <span>${Number(slot.available_count)} free${names.length ? ` · ${escapeHtml(names.join(", "))}` : ""}</span>
+          </button>`;
+        }).join("")}
+      </div>
+    </section>`).join("");
 
-function saveFriend(
-  friend
-) {
-
-  localStorage.setItem(
-
-    FRIEND_STORAGE_KEY,
-
-    JSON.stringify(
-      friend
-    )
-
-  );
-
+  slotGroups.querySelectorAll("[data-slot-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = Number(button.dataset.slotId);
+      if (state.selectedSlotIds.has(id)) state.selectedSlotIds.delete(id);
+      else state.selectedSlotIds.add(id);
+      button.classList.toggle("selected", state.selectedSlotIds.has(id));
+      button.setAttribute("aria-pressed", String(state.selectedSlotIds.has(id)));
+      updateSelectedCount();
+    });
+  });
 }
 
+function updateSelectedCount() {
+  const count = state.selectedSlotIds.size;
+  selectedCount.textContent = `${count} selected`;
+}
 
+async function saveResponse() {
+  voteMessage.textContent = "";
+  const name = participantNameInput.value.trim();
+  if (!name) {
+    voteMessage.textContent = "Add your name first.";
+    participantNameInput.focus();
+    return;
+  }
 
-/* =====================================
-   LOAD FRIEND LOCALLY
-===================================== */
+  saveResponseButton.disabled = true;
+  saveResponseButton.textContent = "Saving…";
 
-function loadSavedFriend() {
+  const { data, error } = await supabase.rpc("submit_availability_response", {
+    p_token: state.pollToken,
+    p_name: name,
+    p_slot_ids: [...state.selectedSlotIds],
+    p_participant_token: state.participantToken
+  });
 
+  saveResponseButton.disabled = false;
+  saveResponseButton.textContent = state.participantToken ? "Update availability" : "Save availability";
+
+  if (error || !data) {
+    console.error(error);
+    voteMessage.textContent = friendlyError(error, "Could not save your availability.");
+    return;
+  }
+
+  state.participantToken = data;
+  localStorage.setItem(participantStorageKey(state.pollToken), data);
+  saveResponseButton.textContent = "Update availability";
+  showToast("Availability saved.");
+  await refreshPollAfterSave();
+}
+
+async function refreshPollAfterSave() {
+  const { data, error } = await supabase.rpc("get_availability_poll", { p_token: state.pollToken });
+  if (!error && data) {
+    state.poll = data;
+    renderPoll();
+  }
+}
+
+async function copyCurrentLink() {
   try {
-
-    const raw =
-      localStorage.getItem(
-        FRIEND_STORAGE_KEY
-      );
-
-
-    if (
-      !raw
-    ) {
-
-      return null;
-
-    }
-
-
-    return JSON.parse(
-      raw
-    );
-
+    await navigator.clipboard.writeText(window.location.href);
+    showToast("Share link copied.");
   } catch {
-
-    return null;
-
+    window.prompt("Copy this link:", window.location.href);
   }
-
 }
 
-
-
-/* =====================================
-   CLEAR FRIEND
-===================================== */
-
-function clearSavedFriend() {
-
-  localStorage.removeItem(
-    FRIEND_STORAGE_KEY
-  );
-
+function formatSlotDate(slot) {
+  const date = new Date(slot.starts_at);
+  const day = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(date);
+  return `${day} · ${formatTimeRange(slot)}`;
 }
 
-
-
-/* =====================================
-   LOAD SAFE CALENDAR
-===================================== */
-
-async function refreshCalendar() {
-
-  if (
-    !state.friend
-  ) {
-
-    return;
-
-  }
-
-
-  setSyncStatus(
-    "syncing...",
-    true
-  );
-
-
-  const {
-    data,
-    error
-  } =
-    await supabase
-      .rpc(
-        "friend_calendar",
-        {
-          p_friend_id:
-            state.friend.id
-        }
-      );
-
-
-  if (
-    error
-  ) {
-
-    console.error(
-      "Calendar load error:",
-      error
-    );
-
-
-    setSyncStatus(
-      "sync error",
-      true
-    );
-
-
-    return;
-
-  }
-
-
-  state.items =
-    (data || [])
-      .map(
-        mapCalendarItem
-      );
-
-
-  renderCalendar();
-
-
-  if (
-    !dayModal
-      .classList
-      .contains(
-        "hidden"
-      )
-  ) {
-
-    renderTimeline();
-
-  }
-
-
-  setSyncStatus(
-    "● synced",
-    false
-  );
-
+function formatTimeRange(slot) {
+  const formatter = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" });
+  return `${formatter.format(new Date(slot.starts_at))}–${formatter.format(new Date(slot.ends_at))}`;
 }
 
-
-
-/* =====================================
-   DATABASE ITEM → APP ITEM
-===================================== */
-
-function mapCalendarItem(
-  item
-) {
-
-  return {
-
-    id:
-      item.item_id,
-
-    source:
-      item.source,
-
-    type:
-      item.item_type,
-
-    title:
-      item.title,
-
-    template:
-      item.template,
-
-    date:
-      item.event_date,
-
-    start:
-      normaliseDatabaseTime(
-        item.start_time
-      ),
-
-    end:
-      normaliseDatabaseTime(
-        item.end_time
-      ),
-
-    notes:
-      item.notes || "",
-
-    createdByName:
-      item.created_by_name,
-
-    canEdit:
-      Boolean(
-        item.can_edit
-      )
-
-  };
-
+function participantStorageKey(token) {
+  return `freewhen_participant_${token}`;
 }
 
-
-
-/* =====================================
-   AUTO REFRESH
-===================================== */
-
-function startAutoRefresh() {
-
-  stopAutoRefresh();
-
-
-  state.refreshTimer =
-    window.setInterval(
-      () => {
-
-        refreshCalendar();
-
-      },
-      10000
-    );
-
+function resetPollState() {
+  state.pollToken = null;
+  state.poll = null;
+  state.selectedSlotIds = new Set();
+  state.participantToken = null;
+  participantNameInput.value = "";
+  voteMessage.textContent = "";
 }
 
-
-
-/* =====================================
-   STOP REFRESH
-===================================== */
-
-function stopAutoRefresh() {
-
-  if (
-    state.refreshTimer
-  ) {
-
-    clearInterval(
-      state.refreshTimer
-    );
-
-
-    state.refreshTimer =
-      null;
-
-  }
-
+function friendlyError(error, fallback) {
+  const message = error?.message || "";
+  if (message.includes("already being used")) return message;
+  if (message.includes("between 1 and 80") || message.includes("between 1 and 40") || message.includes("between 2 and 60")) return message;
+  return fallback;
 }
 
-
-
-/* =====================================
-   MONTH CALENDAR
-===================================== */
-
-function renderCalendar() {
-
-  const year =
-    state.currentDate
-      .getFullYear();
-
-
-  const month =
-    state.currentDate
-      .getMonth();
-
-
-  monthLabel.textContent =
-    new Intl.DateTimeFormat(
-      "en-AU",
-      {
-        month:
-          "long",
-
-        year:
-          "numeric"
-      }
-    )
-      .format(
-        new Date(
-          year,
-          month,
-          1
-        )
-      );
-
-
-  calendarDays.innerHTML =
-    "";
-
-
-  const firstWeekday =
-    new Date(
-      year,
-      month,
-      1
-    )
-      .getDay();
-
-
-  const mondayFirstOffset =
-    (
-      firstWeekday +
-      6
-    ) % 7;
-
-
-  const daysInMonth =
-    new Date(
-      year,
-      month + 1,
-      0
-    )
-      .getDate();
-
-
-  const totalCells =
-    Math.max(
-
-      35,
-
-      Math.ceil(
-        (
-          mondayFirstOffset +
-          daysInMonth
-        ) / 7
-      ) * 7
-
-    );
-
-
-  const todayKey =
-    toDateKey(
-      new Date()
-    );
-
-
-  for (
-    let index = 0;
-    index < totalCells;
-    index += 1
-  ) {
-
-    const dayNumber =
-      index -
-      mondayFirstOffset +
-      1;
-
-
-    if (
-      dayNumber < 1 ||
-      dayNumber > daysInMonth
-    ) {
-
-      const blank =
-        document.createElement(
-          "div"
-        );
-
-
-      blank.className =
-        "day-cell blank-day";
-
-
-      calendarDays.append(
-        blank
-      );
-
-
-      continue;
-
-    }
-
-
-    const dateKey =
-      makeDateKey(
-        year,
-        month,
-        dayNumber
-      );
-
-
-    const button =
-      document.createElement(
-        "button"
-      );
-
-
-    button.type =
-      "button";
-
-
-    button.className =
-      "day-cell";
-
-
-    if (
-      dateKey ===
-      todayKey
-    ) {
-
-      button.classList.add(
-        "today"
-      );
-
-    }
-
-
-    const number =
-      document.createElement(
-        "span"
-      );
-
-
-    number.className =
-      "day-number";
-
-
-    number.textContent =
-      String(
-        dayNumber
-      );
-
-
-    button.append(
-      number
-    );
-
-
-    const summary =
-      document.createElement(
-        "span"
-      );
-
-
-    summary.className =
-      "day-summary";
-
-
-    const items =
-      getItemsForDate(
-        dateKey
-      );
-
-
-    const visible =
-      items.slice(
-        0,
-        3
-      );
-
-
-    for (
-      const item
-      of visible
-    ) {
-
-      const entry =
-        document.createElement(
-          "span"
-        );
-
-
-      entry.className =
-        `summary-entry ${getVisualClass(item)}`;
-
-
-      entry.textContent =
-        `${item.start} ${item.title}`;
-
-
-      summary.append(
-        entry
-      );
-
-    }
-
-
-    const remaining =
-      items.length -
-      visible.length;
-
-
-    if (
-      remaining > 0
-    ) {
-
-      const more =
-        document.createElement(
-          "span"
-        );
-
-
-      more.className =
-        "more-entry";
-
-
-      more.textContent =
-        `+${remaining} more`;
-
-
-      summary.append(
-        more
-      );
-
-    }
-
-
-    button.append(
-      summary
-    );
-
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        openDayView(
-          dateKey
-        );
-
-      }
-    );
-
-
-    calendarDays.append(
-      button
-    );
-
-  }
-
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-
-
-/* =====================================
-   DAY VIEW
-===================================== */
-
-function openDayView(
-  dateKey
-) {
-
-  state.selectedDate =
-    dateKey;
-
-
-  dayTitle.textContent =
-    formatDateLong(
-      dateKey
-    );
-
-
-  renderTimeline();
-
-
-  dayModal.classList.remove(
-    "hidden"
-  );
-
-
-  document.body.classList.add(
-    "modal-open"
-  );
-
-}
-
-
-
-/* =====================================
-   CLOSE DAY
-===================================== */
-
-function closeDayView() {
-
-  dayModal.classList.add(
-    "hidden"
-  );
-
-
-  updateBodyModalState();
-
-}
-
-
-
-/* =====================================
-   TIMELINE
-===================================== */
-
-function renderTimeline() {
-
-  timeline.innerHTML =
-    "";
-
-
-  /* 48 x 30-minute slots */
-
-  for (
-    let slotIndex = 0;
-    slotIndex < 48;
-    slotIndex += 1
-  ) {
-
-    const label =
-      document.createElement(
-        "div"
-      );
-
-
-    label.className =
-      "time-label";
-
-
-    label.style.gridRow =
-      String(
-        slotIndex + 1
-      );
-
-
-    label.style.gridColumn =
-      "1";
-
-
-    /*
-      xx:00 is labelled.
-      xx:30 is only a dashed line.
-    */
-
-    if (
-      slotIndex % 2 === 0
-    ) {
-
-      label.textContent =
-        indexToTime(
-          slotIndex
-        );
-
-    }
-
-
-    timeline.append(
-      label
-    );
-
-
-    const slot =
-      document.createElement(
-        "button"
-      );
-
-
-    slot.type =
-      "button";
-
-
-    slot.className =
-      slotIndex % 2 === 0
-        ? "time-slot whole-hour"
-        : "time-slot half-hour";
-
-
-    slot.style.gridRow =
-      String(
-        slotIndex + 1
-      );
-
-
-    slot.style.gridColumn =
-      "2";
-
-
-    const slotTime =
-      indexToTime(
-        slotIndex
-      );
-
-
-    slot.addEventListener(
-      "click",
-      () => {
-
-        const startMinutes =
-          timeToMinutes(
-            slotTime
-          );
-
-
-        const endMinutes =
-          Math.min(
-            startMinutes + 60,
-            1440
-          );
-
-
-        openEditor({
-
-          start:
-            slotTime,
-
-          end:
-            minutesToTime(
-              endMinutes
-            )
-
-        });
-
-      }
-    );
-
-
-    timeline.append(
-      slot
-    );
-
-  }
-
-
-
-  /* EVENT BLOCKS */
-
-  const items =
-    getItemsForDate(
-      state.selectedDate
-    );
-
-
-  for (
-    const item
-    of items
-  ) {
-
-    const startIndex =
-      timeToMinutes(
-        item.start
-      ) / 30;
-
-
-    const endIndex =
-      timeToMinutes(
-        item.end
-      ) / 30;
-
-
-    if (
-      !Number.isInteger(
-        startIndex
-      ) ||
-      !Number.isInteger(
-        endIndex
-      ) ||
-      endIndex <= startIndex
-    ) {
-
-      continue;
-
-    }
-
-
-    const block =
-      document.createElement(
-        "button"
-      );
-
-
-    block.type =
-      "button";
-
-
-    block.className =
-      `event-block ${getVisualClass(item)}`;
-
-
-    block.style.gridRow =
-      `${startIndex + 1} / ${endIndex + 1}`;
-
-
-    block.style.gridColumn =
-      "2";
-
-
-    const title =
-      document.createElement(
-        "strong"
-      );
-
-
-    title.textContent =
-      item.title;
-
-
-    const detail =
-      document.createElement(
-        "span"
-      );
-
-
-    detail.textContent =
-      `${item.start}–${item.end}`;
-
-
-    block.append(
-      title,
-      detail
-    );
-
-
-    block.addEventListener(
-      "click",
-      () => {
-
-        if (
-          item.source ===
-            "friend" &&
-          item.canEdit
-        ) {
-
-          openEditor({
-            item
-          });
-
-        } else {
-
-          openInfoModal(
-            item
-          );
-
-        }
-
-      }
-    );
-
-
-    timeline.append(
-      block
-    );
-
-  }
-
-}
-
-
-
-/* =====================================
-   VISUAL EVENT CLASS
-===================================== */
-
-function getVisualClass(
-  item
-) {
-
-  if (
-    item.type ===
-      "schedule"
-  ) {
-
-    return item.title ===
-      "Work"
-      ? "work"
-      : "busy";
-
-  }
-
-
-  if (
-    item.source ===
-      "private"
-  ) {
-
-    return "private";
-
-  }
-
-
-  return "friend";
-
-}
-
-
-
-/* =====================================
-   INFO MODAL
-===================================== */
-
-function openInfoModal(
-  item
-) {
-
-  infoTitle.textContent =
-    item.title;
-
-
-  infoDate.textContent =
-    formatDateLong(
-      item.date
-    );
-
-
-  infoTime.textContent =
-    `${item.start}–${item.end}`;
-
-
-  privateMessage.classList.toggle(
-    "hidden",
-    item.type === "schedule"
-  );
-
-
-  infoModal.classList.remove(
-    "hidden"
-  );
-
-
-  document.body.classList.add(
-    "modal-open"
-  );
-
-}
-
-
-
-/* =====================================
-   CLOSE INFO
-===================================== */
-
-function closeInfoModal() {
-
-  infoModal.classList.add(
-    "hidden"
-  );
-
-
-  updateBodyModalState();
-
-}
-
-
-
-/* =====================================
-   OPEN EDITOR
-===================================== */
-
-function openEditor({
-
-  start =
-    "18:00",
-
-  end =
-    "19:00",
-
-  item =
-    null
-
-} = {}) {
-
-
-  eventForm.reset();
-
-
-  formMessage.textContent =
-    "";
-
-
-  state.editingId =
-    item?.id ||
-    null;
-
-
-  if (
-    item
-  ) {
-
-    editorLabel.textContent =
-      "edit your plan";
-
-
-    editorHeading.textContent =
-      item.title;
-
-
-    saveEventButton.textContent =
-      "Save changes";
-
-
-    deleteEventButton.classList.remove(
-      "hidden"
-    );
-
-  } else {
-
-    editorLabel.textContent =
-      "propose a plan";
-
-
-    editorHeading.textContent =
-      "Add an event";
-
-
-    saveEventButton.textContent =
-      "Add event";
-
-
-    deleteEventButton.classList.add(
-      "hidden"
-    );
-
-  }
-
-
-  templateSelect.value =
-    item?.template ||
-    "";
-
-
-  if (
-    item?.template ===
-      "custom"
-  ) {
-
-    customEventTitle.value =
-      item.title;
-
-  } else {
-
-    customEventTitle.value =
-      "";
-
-  }
-
-
-  updateCustomTitleField();
-
-
-  eventDateInput.value =
-    item?.date ||
-    state.selectedDate ||
-    toDateKey(
-      new Date()
-    );
-
-
-  startTimeSelect.value =
-    item?.start ||
-    start;
-
-
-  endTimeSelect.value =
-    item?.end ||
-    end;
-
-
-  notesInput.value =
-    item?.notes ||
-    "";
-
-
-  eventModal.classList.remove(
-    "hidden"
-  );
-
-
-  document.body.classList.add(
-    "modal-open"
-  );
-
-}
-
-
-
-/* =====================================
-   CLOSE EDITOR
-===================================== */
-
-function closeEditor() {
-
-  eventModal.classList.add(
-    "hidden"
-  );
-
-
-  state.editingId =
-    null;
-
-
-  formMessage.textContent =
-    "";
-
-
-  updateBodyModalState();
-
-}
-
-
-
-/* =====================================
-   CUSTOM EVENT FIELD
-===================================== */
-
-function updateCustomTitleField() {
-
-  const custom =
-    templateSelect.value ===
-    "custom";
-
-
-  customTitleField.classList.toggle(
-    "hidden",
-    !custom
-  );
-
-
-  customEventTitle.required =
-    custom;
-
-
-  if (
-    !custom
-  ) {
-
-    customEventTitle.value =
-      "";
-
-  }
-
-}
-
-
-
-/* =====================================
-   TEMPLATE DURATION
-===================================== */
-
-function applyTemplateDuration() {
-
-  const template =
-    templates[
-      templateSelect.value
-    ];
-
-
-  if (
-    !template
-  ) {
-
-    return;
-
-  }
-
-
-  const start =
-    timeToMinutes(
-      startTimeSelect.value
-    );
-
-
-  const end =
-    Math.min(
-      start +
-      template.duration,
-      1440
-    );
-
-
-  endTimeSelect.value =
-    minutesToTime(
-      end
-    );
-
-}
-
-
-
-/* =====================================
-   SAVE FRIEND EVENT
-===================================== */
-
-async function saveEvent(
-  event
-) {
-
-  event.preventDefault();
-
-
-  formMessage.textContent =
-    "";
-
-
-  if (
-    !state.friend
-  ) {
-
-    return;
-
-  }
-
-
-  const template =
-    templateSelect.value;
-
-
-  if (
-    !templates[
-      template
-    ]
-  ) {
-
-    showFormError(
-      "Please select a template."
-    );
-
-
-    return;
-
-  }
-
-
-  let title =
-    templates[
-      template
-    ].title;
-
-
-  if (
-    template ===
-      "custom"
-  ) {
-
-    title =
-      customEventTitle
-        .value
-        .trim();
-
-
-    if (
-      !title
-    ) {
-
-      showFormError(
-        "Please type an event name."
-      );
-
-
-      customEventTitle.focus();
-
-
-      return;
-
-    }
-
-  }
-
-
-  const date =
-    eventDateInput.value;
-
-
-  const start =
-    startTimeSelect.value;
-
-
-  const end =
-    endTimeSelect.value;
-
-
-  if (
-    !date
-  ) {
-
-    showFormError(
-      "Please select a date."
-    );
-
-
-    return;
-
-  }
-
-
-  const startMinutes =
-    timeToMinutes(
-      start
-    );
-
-
-  const endMinutes =
-    timeToMinutes(
-      end
-    );
-
-
-  if (
-    endMinutes <=
-    startMinutes
-  ) {
-
-    showFormError(
-      "The end time must be later than the start time."
-    );
-
-
-    return;
-
-  }
-
-
-
-  /* =====================================
-     CONFLICT CHECK
-  ====================================== */
-
-  const conflict =
-    state.items.find(
-      item => {
-
-        if (
-          item.id ===
-            state.editingId ||
-          item.date !==
-            date
-        ) {
-
-          return false;
-
-        }
-
-
-        const existingStart =
-          timeToMinutes(
-            item.start
-          );
-
-
-        const existingEnd =
-          timeToMinutes(
-            item.end
-          );
-
-
-        return (
-          startMinutes <
-            existingEnd &&
-          endMinutes >
-            existingStart
-        );
-
-      }
-    );
-
-
-  if (
-    conflict
-  ) {
-
-    showFormError(
-      `That time overlaps with “${conflict.title}” (${conflict.start}–${conflict.end}).`
-    );
-
-
-    return;
-
-  }
-
-
-
-  saveEventButton.disabled =
-    true;
-
-
-  saveEventButton.textContent =
-    "Saving...";
-
-
-  let error;
-
-
-
-  /* UPDATE */
-
-  if (
-    state.editingId
-  ) {
-
-    const result =
-      await supabase
-        .rpc(
-          "update_friend_event",
-          {
-
-            p_friend_id:
-              state.friend.id,
-
-            p_event_id:
-              state.editingId,
-
-            p_template:
-              template,
-
-            p_title:
-              title,
-
-            p_event_date:
-              date,
-
-            p_start_time:
-              start,
-
-            p_end_time:
-              end,
-
-            p_notes:
-              notesInput
-                .value
-                .trim()
-
-          }
-        );
-
-
-    error =
-      result.error;
-
-  }
-
-
-  /* CREATE */
-
-  else {
-
-    const result =
-      await supabase
-        .rpc(
-          "create_friend_event",
-          {
-
-            p_friend_id:
-              state.friend.id,
-
-            p_template:
-              template,
-
-            p_title:
-              title,
-
-            p_event_date:
-              date,
-
-            p_start_time:
-              start,
-
-            p_end_time:
-              end,
-
-            p_notes:
-              notesInput
-                .value
-                .trim()
-
-          }
-        );
-
-
-    error =
-      result.error;
-
-  }
-
-
-  saveEventButton.disabled =
-    false;
-
-
-  if (
-    error
-  ) {
-
-    console.error(
-      "Save error:",
-      error
-    );
-
-
-    saveEventButton.textContent =
-      state.editingId
-        ? "Save changes"
-        : "Add event";
-
-
-    showFormError(
-      "Could not save the event."
-    );
-
-
-    return;
-
-  }
-
-
-  state.selectedDate =
-    date;
-
-
-  const chosenDate =
-    new Date(
-      `${date}T00:00:00`
-    );
-
-
-  state.currentDate =
-    new Date(
-
-      chosenDate
-        .getFullYear(),
-
-      chosenDate
-        .getMonth(),
-
-      1
-
-    );
-
-
-  await refreshCalendar();
-
-
-  dayTitle.textContent =
-    formatDateLong(
-      date
-    );
-
-
-  closeEditor();
-
-
-  renderTimeline();
-
-
-  renderCalendar();
-
-}
-
-
-
-/* =====================================
-   DELETE OWN EVENT
-===================================== */
-
-async function deleteCurrentEvent() {
-
-  if (
-    !state.friend ||
-    !state.editingId
-  ) {
-
-    return;
-
-  }
-
-
-  const item =
-    state.items.find(
-      calendarItem =>
-        calendarItem.id ===
-        state.editingId
-    );
-
-
-  if (
-    !item ||
-    !item.canEdit
-  ) {
-
-    return;
-
-  }
-
-
-  deleteEventButton.disabled =
-    true;
-
-
-  deleteEventButton.textContent =
-    "Deleting...";
-
-
-  const {
-    error
-  } =
-    await supabase
-      .rpc(
-        "delete_friend_event",
-        {
-
-          p_friend_id:
-            state.friend.id,
-
-          p_event_id:
-            state.editingId
-
-        }
-      );
-
-
-  deleteEventButton.disabled =
-    false;
-
-
-  deleteEventButton.textContent =
-    "Delete";
-
-
-  if (
-    error
-  ) {
-
-    console.error(
-      "Delete error:",
-      error
-    );
-
-
-    showFormError(
-      "Could not delete the event."
-    );
-
-
-    return;
-
-  }
-
-
-  await refreshCalendar();
-
-
-  closeEditor();
-
-
-  renderTimeline();
-
-
-  renderCalendar();
-
-}
-
-
-
-/* =====================================
-   BUILD TIME OPTIONS
-===================================== */
-
-function buildTimeOptions() {
-
-  startTimeSelect.innerHTML =
-    "";
-
-
-  endTimeSelect.innerHTML =
-    "";
-
-
-  /* 00:00 → 23:30 */
-
-  for (
-    let index = 0;
-    index < 48;
-    index += 1
-  ) {
-
-    const time =
-      indexToTime(
-        index
-      );
-
-
-    startTimeSelect.add(
-      new Option(
-        time,
-        time
-      )
-    );
-
-  }
-
-
-  /* 00:30 → 24:00 */
-
-  for (
-    let index = 1;
-    index <= 48;
-    index += 1
-  ) {
-
-    const time =
-      indexToTime(
-        index
-      );
-
-
-    endTimeSelect.add(
-      new Option(
-        time,
-        time
-      )
-    );
-
-  }
-
-}
-
-
-
-/* =====================================
-   ITEMS FOR DATE
-===================================== */
-
-function getItemsForDate(
-  dateKey
-) {
-
-  return state.items
-    .filter(
-      item =>
-        item.date ===
-        dateKey
-    )
-    .sort(
-      (
-        first,
-        second
-      ) => {
-
-        return (
-          timeToMinutes(
-            first.start
-          )
-          -
-          timeToMinutes(
-            second.start
-          )
-        );
-
-      }
-    );
-
-}
-
-
-
-/* =====================================
-   DATE HELPERS
-===================================== */
-
-function makeDateKey(
-  year,
-  zeroBasedMonth,
-  day
-) {
-
-  const month =
-    String(
-      zeroBasedMonth + 1
-    )
-      .padStart(
-        2,
-        "0"
-      );
-
-
-  const date =
-    String(
-      day
-    )
-      .padStart(
-        2,
-        "0"
-      );
-
-
-  return (
-    `${year}-${month}-${date}`
-  );
-
-}
-
-
-function toDateKey(
-  date
-) {
-
-  return makeDateKey(
-
-    date.getFullYear(),
-
-    date.getMonth(),
-
-    date.getDate()
-
-  );
-
-}
-
-
-function formatDateLong(
-  dateKey
-) {
-
-  const date =
-    new Date(
-      `${dateKey}T00:00:00`
-    );
-
-
-  return new Intl
-    .DateTimeFormat(
-      "en-AU",
-      {
-
-        weekday:
-          "long",
-
-        day:
-          "numeric",
-
-        month:
-          "long",
-
-        year:
-          "numeric"
-
-      }
-    )
-    .format(
-      date
-    );
-
-}
-
-
-
-/* =====================================
-   TIME HELPERS
-===================================== */
-
-function indexToTime(
-  index
-) {
-
-  return minutesToTime(
-    index * 30
-  );
-
-}
-
-
-function minutesToTime(
-  totalMinutes
-) {
-
-  if (
-    totalMinutes ===
-    1440
-  ) {
-
-    return "24:00";
-
-  }
-
-
-  const hours =
-    Math.floor(
-      totalMinutes / 60
-    );
-
-
-  const minutes =
-    totalMinutes %
-    60;
-
-
-  return (
-    String(
-      hours
-    )
-      .padStart(
-        2,
-        "0"
-      )
-    +
-    ":"
-    +
-    String(
-      minutes
-    )
-      .padStart(
-        2,
-        "0"
-      )
-  );
-
-}
-
-
-function timeToMinutes(
-  time
-) {
-
-  if (
-    time ===
-    "24:00"
-  ) {
-
-    return 1440;
-
-  }
-
-
-  const [
-    hours,
-    minutes
-  ] =
-    normaliseDatabaseTime(
-      time
-    )
-      .split(":")
-      .map(Number);
-
-
-  return (
-    hours * 60 +
-    minutes
-  );
-
-}
-
-
-function normaliseDatabaseTime(
-  time
-) {
-
-  if (
-    !time
-  ) {
-
-    return "00:00";
-
-  }
-
-
-  return String(
-    time
-  )
-    .slice(
-      0,
-      5
-    );
-
-}
-
-
-
-/* =====================================
-   ERROR
-===================================== */
-
-function showFormError(
-  message
-) {
-
-  formMessage.textContent =
-    message;
-
-}
-
-
-
-/* =====================================
-   SYNC STATUS
-===================================== */
-
-function setSyncStatus(
-  text,
-  syncing
-) {
-
-  syncStatus.textContent =
-    text;
-
-
-  syncStatus.classList.toggle(
-    "syncing",
-    syncing
-  );
-
-}
-
-
-
-/* =====================================
-   BODY MODAL STATE
-===================================== */
-
-function updateBodyModalState() {
-
-  const anythingOpen =
-    !dayModal.classList.contains(
-      "hidden"
-    )
-    ||
-    !infoModal.classList.contains(
-      "hidden"
-    )
-    ||
-    !eventModal.classList.contains(
-      "hidden"
-    );
-
-
-  document.body.classList.toggle(
-    "modal-open",
-    anythingOpen
-  );
-
+let toastTimer;
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
 }
