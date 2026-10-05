@@ -122,7 +122,7 @@ const units = {
     summary: 'Game theory, macroeconomics, economic fluctuations, unemployment, inflation and policy.',
     details: [
       'Game Theory Presentation is an individual graphical + written take-home task based on Learning Modules L1–L2.',
-      'MyLabs Exercises cover GDP, Unemployment, and CPI / Inflation interactives. The average of the three is converted to a mark out of 15.',
+      'MyLabs Exercises cover GDP, Unemployment, and CPI / Inflation interactives. Each exercise is worth 5% (15% total), allows two attempts, and the highest mark for each exercise counts.',
       'Macroeconomic Review and Analysis (MRA) is worth 50% and covers lecture topics L3–L8.',
       'Part A of the MRA is a timed invigilated eTest; Part B includes short-answer problems and well-labelled hand-drawn diagrams.'
     ],
@@ -138,7 +138,7 @@ const units = {
       9: ['L7 Inflation & the Phillips Curve', 'Tutorial: L6', 'MyLabs L7 Exercises available · 14 Sep'],
       10: ['L8 Monetary Policy', 'Tutorial: L7', 'Consolidate macro topics'],
       11: ['Tuition free week', 'No scheduled class', 'Catch up MyLabs exercises'],
-      12: ['MRA final assessment Q&A', 'Tutorial: L8', 'MyLabs L3/L5/L7 due · 5 Oct 9pm'],
+      12: ['Final lecture meeting · MRA preparation · 9 Oct', 'Tutorial: L8', 'MyLabs L3/L5/L7 · official due 5 Oct · grace through 7 Oct'],
       13: ['No lecture · Part A MRA preparation', 'Open Q&A + individual consults', 'Prepare for invigilated eTest'],
       14: ['No lecture/tutorial · finalise Part A', 'MRA Part A · 21 Oct', 'Part B available · 22 Oct 11am'],
       15: ['Study week', 'No classes', 'MRA Part B preparation'],
@@ -157,13 +157,13 @@ const assessments = [
   { id: 'acct-portfolio', unit: 'ACCT2002', name: 'Portfolio · Parts A–C', weight: '30%', due: '2026-09-21T23:59:00+08:00', dueLabel: '21 sep · 11:59pm', note: 'MyLab · Modules 4–6 · all parts due together' },
   { id: 'ecom-model', unit: 'ECOM1000', name: 'Assessment 2 · Part 1 · Excel Model', weight: '15%', due: '2026-09-23T23:59:00+08:00', dueLabel: '23 sep · 11:59pm', note: 'Individual MPT / Sharpe Ratio model + Solver' },
   { id: 'taxa-mst', unit: 'TAXA2000', name: 'Invigilated eTest', weight: '25%', due: '2026-09-25T12:00:00+08:00', dueLabel: '25 sep · 12:00pm', note: 'Income · deductions · UCA · CGT · 2h' },
-  { id: 'econ-mylabs', unit: 'ECON1000', name: 'MyLabs L3, L5 & L7 Exercises', weight: '15%', due: '2026-10-05T21:00:00+08:00', dueLabel: '5 oct · 9:00pm', note: 'GDP · unemployment · CPI / inflation' },
+  { id: 'econ-mylabs', unit: 'ECON1000', name: 'MyLabs L3, L5 & L7 Exercises', weight: '15%', due: '2026-10-07T23:59:00+08:00', dueLabel: '5 oct official · grace to 7 oct', note: 'GDP · unemployment · CPI / inflation · 5% each · two attempts each · highest mark counts · exact grace cut-off time not stated' },
   { id: 'ecom-report', unit: 'ECOM1000', name: 'Assessment 2 · Parts 2 & 3', weight: '20%', due: '2026-10-14T23:59:00+08:00', dueLabel: '14 oct · 11:59pm', note: 'Peer Evaluation 5% + Group Investment Report 15%' },
-  { id: 'econ-mra-a', unit: 'ECON1000', name: 'MRA · Part A', weight: 'part of 50%', due: '2026-10-21T20:00:00+08:00', dueLabel: '21 oct · by 8:00pm', note: '30-minute invigilated eTest · available 8am–8pm' },
+  { id: 'econ-mra-a', unit: 'ECON1000', name: 'MRA · Part A', weight: 'part of 50%', due: '2026-10-21T20:00:00+08:00', dueLabel: '21 oct · by 8:00pm', note: '30-minute invigilated eTest · available 8am–8pm · MRA 50% overall · focuses on L3–L8 · prep lecture 9 Oct' },
   { id: 'acct-final', unit: 'ACCT2002', name: 'Final Examination', weight: '40%', due: '2026-11-02T00:00:00+08:00', dueLabel: 'exam period · 2–13 nov', note: 'Modules 7–10 · closed book · exact date TBA' },
   { id: 'ecom-final', unit: 'ECOM1000', name: 'Final Exam', weight: '50%', due: '2026-11-02T00:00:00+08:00', dueLabel: 'exam period · centrally scheduled', note: 'Closed-book online · 2h 15m · exact date TBA' },
   { id: 'taxa-final', unit: 'TAXA2000', name: 'Invigilated Final Exam', weight: '50%', due: '2026-11-02T00:00:00+08:00', dueLabel: 'exam period · date TBA', note: 'All topics · 2h · remotely invigilated' },
-  { id: 'econ-mra-b', unit: 'ECON1000', name: 'MRA · Part B', weight: 'part of 50%', due: '2026-11-05T23:00:00+08:00', dueLabel: '5 nov · 11:00pm', note: 'Final macroeconomic review + analysis' }
+  { id: 'econ-mra-b', unit: 'ECON1000', name: 'MRA · Part B', weight: 'part of 50%', due: '2026-11-05T23:00:00+08:00', dueLabel: '5 nov · 11:00pm', note: 'Final macroeconomic review + analysis · MRA 50% overall · focuses on L3–L8 · prep lecture 9 Oct' }
 ].map(item => ({ ...item, dueDate: new Date(item.due) }));
 
 const storedChecks = JSON.parse(localStorage.getItem('unitOutlineChecks') || '{}');
