@@ -15,7 +15,7 @@ const units = {
     details: [
       'Semester Test covers Modules 1–3 and uses LockDown Browser + Respondus Monitor.',
       'Portfolio covers Modules 4–6 in MyLab. Each part has a 180-minute limit and one attempt; once a question is viewed you cannot go backwards.',
-      'Final examination covers Modules 7–10 and is closed book with a non-programmable calculator.',
+      'Final examination covers Modules 7–10 and is on Saturday 7 Nov at 1:00pm. It is face-to-face, closed book, 2h writing + 10m reading, with a non-programmable calculator permitted and no notes/materials.',
       'Portfolio Parts A, B and C release progressively on 28 Aug, 4 Sep and 11 Sep; all are due together on 21 Sep.'
     ],
     weeks: {
@@ -34,8 +34,8 @@ const units = {
       13: ['CVP practice', 'Tutorial: 3-2, 3-8, 3-21, 3-25, 3-41, 3-49, AQ-17', 'Consolidate Module 10'],
       14: ['Revision', 'Revision week', 'Prepare for final examination'],
       15: ['Study week', 'No classes', 'Final exam preparation'],
-      16: ['Examinations week 1', 'Final exam may be scheduled in exam period', 'Check OASIS timetable'],
-      17: ['Examinations week 2', 'Final exam may be scheduled in exam period', 'Check OASIS timetable']
+      16: ['Examinations week 1', 'Final Examination · Sat 7 Nov · 1:00pm', 'Face-to-face · closed book · calculator permitted'],
+      17: ['Examinations week 2', 'No ACCT2002 exam scheduled this week', 'Final exam completed 7 Nov']
     }
   },
   ECOM1000: {
@@ -52,7 +52,7 @@ const units = {
       'Assessment 2 applies Modern Portfolio Theory and the Sharpe Ratio to Value vs Growth Investing using historical stock data from 2021–2026.',
       'The individual Excel model optimises a US$250,000 portfolio using Excel functions and Solver.',
       'Assessment 2 includes Individual Excel Model (15%), Peer Evaluation (5%) and Group Investment Report (15%).',
-      'Final exam is closed-book, online, 2h 15m and invigilated through Respondus LockDown Browser.'
+      'Final exam is on Tuesday 3 Nov at 1:00pm, online using Respondus, closed book, 2h writing + 10m reading. No calculator or external materials are permitted; some materials are embedded in the Excel sheet used for datasets/solutions.'
     ],
     weeks: {
       1: ['Module 1 · Intro to Business Analytics', 'Welcome Lab + MyLab enrolment', 'Brief intro to Excel'],
@@ -70,8 +70,8 @@ const units = {
       13: ['Module 10 · Data Governance & Ethics', 'Lab 9 problems + homework', 'Peer Evaluation + Group Report due · 14 Oct'],
       14: ['Final exam preparation recordings', 'No live lecture', 'Lab 10 group discussion + ethics lesson'],
       15: ['Study week', 'No scheduled class', 'Final exam preparation'],
-      16: ['Exam week 1', 'Final exam centrally scheduled', 'Check OASIS timetable'],
-      17: ['Exam week 2', 'Final exam centrally scheduled', 'Check OASIS timetable']
+      16: ['Exam week 1', 'Final Exam · Tue 3 Nov · 1:00pm', 'Online Respondus · closed book · no calculator'],
+      17: ['Exam week 2', 'No ECOM1000 exam scheduled this week', 'Final exam completed 3 Nov']
     }
   },
   TAXA2000: {
@@ -88,7 +88,7 @@ const units = {
       'The unit indicates an expected study load of 10 hours per week.',
       'The mid-semester test covers Income, Deductions, Uniform Capital Allowances and Capital Gains Tax.',
       'The final exam covers all topics with greater emphasis on Partnerships, Trusts and Minors, Companies, GST and Tax Professionals.',
-      'Both the mid-semester test and final exam are remotely invigilated and are 2 hours in duration.'
+      'The final exam is on Thursday 12 Nov at 1:00pm, online using Respondus, 2 hours, restricted book. A non-programmable calculator, one A4 sheet of notes (one side), hard-copy PIAT textbook and the electronic Exam Aid Guidebook in Respondus are permitted.'
     ],
     weeks: {
       1: ['Framework of the Australian Taxation System + Income', 'Tutorial: unit administration + introduction', 'PIAT Topics 0 / 1'],
@@ -106,8 +106,8 @@ const units = {
       13: ['Tax Professionals', 'Tutorial: GST', 'PIAT Topic 9'],
       14: ['No lecture', 'Tutorial: revision', 'Final exam preparation'],
       15: ['Study week', 'No class', 'Final exam preparation'],
-      16: ['Examinations', 'Final Exam · TBA online', 'Check OASIS timetable'],
-      17: ['Examinations', 'Final Exam period', 'Check OASIS timetable']
+      16: ['Examinations', 'No TAXA2000 exam scheduled this week', 'Prepare for restricted-book final'],
+      17: ['Examinations', 'Final Exam · Thu 12 Nov · 1:00pm', 'Online Respondus · restricted book · permitted materials apply']
     }
   },
   ECON1000: {
@@ -160,9 +160,9 @@ const assessments = [
   { id: 'econ-mylabs', unit: 'ECON1000', name: 'MyLabs L3, L5 & L7 Exercises', weight: '15%', due: '2026-10-07T23:59:00+08:00', dueLabel: '5 oct official · grace to 7 oct', note: 'GDP · unemployment · CPI / inflation · 5% each · two attempts each · highest mark counts · exact grace cut-off time not stated' },
   { id: 'ecom-report', unit: 'ECOM1000', name: 'Assessment 2 · Parts 2 & 3', weight: '20%', due: '2026-10-14T23:59:00+08:00', dueLabel: '14 oct · 11:59pm', note: 'Peer Evaluation 5% + Group Investment Report 15%' },
   { id: 'econ-mra-a', unit: 'ECON1000', name: 'MRA · Part A', weight: 'part of 50%', due: '2026-10-21T20:00:00+08:00', dueLabel: '21 oct · by 8:00pm', note: '30-minute invigilated eTest · available 8am–8pm · MRA 50% overall · focuses on L3–L8 · prep lecture 9 Oct' },
-  { id: 'acct-final', unit: 'ACCT2002', name: 'Final Examination', weight: '40%', due: '2026-11-02T00:00:00+08:00', dueLabel: 'exam period · 2–13 nov', note: 'Modules 7–10 · closed book · exact date TBA' },
-  { id: 'ecom-final', unit: 'ECOM1000', name: 'Final Exam', weight: '50%', due: '2026-11-02T00:00:00+08:00', dueLabel: 'exam period · centrally scheduled', note: 'Closed-book online · 2h 15m · exact date TBA' },
-  { id: 'taxa-final', unit: 'TAXA2000', name: 'Invigilated Final Exam', weight: '50%', due: '2026-11-02T00:00:00+08:00', dueLabel: 'exam period · date TBA', note: 'All topics · 2h · remotely invigilated' },
+  { id: 'acct-final', unit: 'ACCT2002', name: 'Final Examination', weight: '40%', due: '2026-11-07T13:00:00+08:00', dueLabel: '7 nov · 1:00pm', note: 'Face-to-face · Modules 7–10 · 2h writing + 10m reading · closed book · non-programmable calculator permitted · no notes/materials' },
+  { id: 'ecom-final', unit: 'ECOM1000', name: 'Final Exam', weight: '50%', due: '2026-11-03T13:00:00+08:00', dueLabel: '3 nov · 1:00pm', note: 'Online Respondus · 2h writing + 10m reading · closed book · no calculator · no external materials; embedded Excel materials only' },
+  { id: 'taxa-final', unit: 'TAXA2000', name: 'Invigilated Final Exam', weight: '50%', due: '2026-11-12T13:00:00+08:00', dueLabel: '12 nov · 1:00pm', note: 'Online Respondus · all topics · 2h · restricted book · calculator + one-sided A4 notes + hard-copy PIAT + electronic Exam Aid Guidebook permitted' },
   { id: 'econ-mra-b', unit: 'ECON1000', name: 'MRA · Part B', weight: 'part of 50%', due: '2026-11-05T23:00:00+08:00', dueLabel: '5 nov · 11:00pm', note: 'Final macroeconomic review + analysis · MRA 50% overall · focuses on L3–L8 · prep lecture 9 Oct' }
 ].map(item => ({ ...item, dueDate: new Date(item.due) }));
 
