@@ -51,8 +51,8 @@ const units = {
     details: [
       'Assessment 2 applies Modern Portfolio Theory and the Sharpe Ratio to Value vs Growth Investing using historical stock data from 2021–2026.',
       'The individual Excel model optimises a US$250,000 portfolio using Excel functions and Solver.',
-      'Assessment 2 includes Individual Excel Model (15%), Peer Evaluation (5%) and Group Investment Report (15%).',
-      'Final exam is on Tuesday 3 Nov at 1:00pm, online using Respondus, closed book, 2h writing + 10m reading. No calculator or external materials are permitted; some materials are embedded in the Excel sheet used for datasets/solutions.'
+      'Assessment 2 includes Individual Excel Model (15%), Peer Evaluation (5%) and Group Investment Report (15%). Parts 2 and 3 are officially due 14 Oct, with the final grace deadline Friday 16 Oct at 11:59pm.',
+      'Final exam is on Tuesday 3 Nov at 1:00pm, online using Respondus, closed book, 2h writing + 10m reading. No calculator or external materials are permitted; some materials are embedded in the Excel sheet used for datasets/solutions. The final tutorial covers Data Governance & Ethics plus recent events/articles that are examinable, and the recap lecture includes practice exercises with recorded solutions/extra exercises.'
     ],
     weeks: {
       1: ['Module 1 · Intro to Business Analytics', 'Welcome Lab + MyLab enrolment', 'Brief intro to Excel'],
@@ -67,8 +67,8 @@ const units = {
       10: ['Module 8 · Forecasting, Regression & Time-Series', 'Lab 7 problems + Pivot Tables homework', 'Excel Model due · 23 Sep 23:59'],
       11: ['Tuition free week', 'Peer marking + group report briefs release · 29 Sep', 'Prepare for group component'],
       12: ['Module 9 · Inferences', 'Lab 8 problems + Forecasting homework', 'CadSoft customer response-time case'],
-      13: ['Module 10 · Data Governance & Ethics', 'Lab 9 problems + homework', 'Peer Evaluation + Group Report due · 14 Oct'],
-      14: ['Final exam preparation recordings', 'No live lecture', 'Lab 10 group discussion + ethics lesson'],
+      13: ['Module 10 · Data Governance & Ethics', 'Lab 9 problems + homework', 'Peer Evaluation + Group Report · 14 Oct official · grace to 16 Oct 23:59'],
+      14: ['Final exam preparation · recap lecture + final tutorial', 'Recap F2F lecture in 210.101 with practice exercises; recorded solutions/extra exercises available', 'Final tutorial: Data Governance & Ethics + recent events/articles examinable · around 40 min'],
       15: ['Study week', 'No scheduled class', 'Final exam preparation'],
       16: ['Exam week 1', 'Final Exam · Tue 3 Nov · 1:00pm', 'Online Respondus · closed book · no calculator'],
       17: ['Exam week 2', 'No ECOM1000 exam scheduled this week', 'Final exam completed 3 Nov']
@@ -123,8 +123,8 @@ const units = {
     details: [
       'Game Theory Presentation is an individual graphical + written take-home task based on Learning Modules L1–L2.',
       'MyLabs Exercises cover GDP, Unemployment, and CPI / Inflation interactives. Each exercise is worth 5% (15% total), allows two attempts, and the highest mark for each exercise counts.',
-      'Macroeconomic Review and Analysis (MRA) is worth 50% and covers lecture topics L3–L8.',
-      'Part A of the MRA is a timed invigilated eTest; Part B includes short-answer problems and well-labelled hand-drawn diagrams.'
+      'Macroeconomic Review and Analysis (MRA) is worth 50% and covers lecture topics L3–L8: Part A is 15% and Part B is 35%.',
+      'Part A of the MRA is a timed invigilated eTest worth 15%; Part B is worth 35% and includes short-answer problems and well-labelled hand-drawn diagrams. The 9 Oct MRA Q&A session was recorded for preparation.'
     ],
     weeks: {
       1: ['L0 Introduction + L1 Strategic Interactions I', 'Tutorial: L0', 'Start game theory foundations'],
@@ -158,12 +158,12 @@ const assessments = [
   { id: 'ecom-model', unit: 'ECOM1000', name: 'Assessment 2 · Part 1 · Excel Model', weight: '15%', due: '2026-09-23T23:59:00+08:00', dueLabel: '23 sep · 11:59pm', note: 'Individual MPT / Sharpe Ratio model + Solver' },
   { id: 'taxa-mst', unit: 'TAXA2000', name: 'Invigilated eTest', weight: '25%', due: '2026-09-25T12:00:00+08:00', dueLabel: '25 sep · 12:00pm', note: 'Income · deductions · UCA · CGT · 2h' },
   { id: 'econ-mylabs', unit: 'ECON1000', name: 'MyLabs L3, L5 & L7 Exercises', weight: '15%', due: '2026-10-07T23:59:00+08:00', dueLabel: '5 oct official · grace to 7 oct', note: 'GDP · unemployment · CPI / inflation · 5% each · two attempts each · highest mark counts · exact grace cut-off time not stated' },
-  { id: 'ecom-report', unit: 'ECOM1000', name: 'Assessment 2 · Parts 2 & 3', weight: '20%', due: '2026-10-14T23:59:00+08:00', dueLabel: '14 oct · 11:59pm', note: 'Peer Evaluation 5% + Group Investment Report 15%' },
-  { id: 'econ-mra-a', unit: 'ECON1000', name: 'MRA · Part A', weight: 'part of 50%', due: '2026-10-21T20:00:00+08:00', dueLabel: '21 oct · by 8:00pm', note: '30-minute invigilated eTest · available 8am–8pm · MRA 50% overall · focuses on L3–L8 · prep lecture 9 Oct' },
+  { id: 'ecom-report', unit: 'ECOM1000', name: 'Assessment 2 · Parts 2 & 3', weight: '20%', due: '2026-10-16T23:59:00+08:00', dueLabel: '14 oct official · grace to 16 oct · 11:59pm', note: 'Peer Evaluation 5% + Group Investment Report 15% · final grace deadline non-negotiable · peer marking has two attempts (last marked) · group report has one submission attempt' },
+  { id: 'econ-mra-a', unit: 'ECON1000', name: 'MRA · Part A', weight: '15%', due: '2026-10-21T20:00:00+08:00', dueLabel: '21 oct · by 8:00pm', note: '30-minute invigilated eTest · available 8am–8pm · focuses on L3–L8 · 9 Oct MRA Q&A recorded' },
   { id: 'acct-final', unit: 'ACCT2002', name: 'Final Examination', weight: '40%', due: '2026-11-07T13:00:00+08:00', dueLabel: '7 nov · 1:00pm', note: 'Face-to-face · Modules 7–10 · 2h writing + 10m reading · closed book · non-programmable calculator permitted · no notes/materials' },
   { id: 'ecom-final', unit: 'ECOM1000', name: 'Final Exam', weight: '50%', due: '2026-11-03T13:00:00+08:00', dueLabel: '3 nov · 1:00pm', note: 'Online Respondus · 2h writing + 10m reading · closed book · no calculator · no external materials; embedded Excel materials only' },
   { id: 'taxa-final', unit: 'TAXA2000', name: 'Invigilated Final Exam', weight: '50%', due: '2026-11-12T13:00:00+08:00', dueLabel: '12 nov · 1:00pm', note: 'Online Respondus · all topics · 2h · restricted book · calculator + one-sided A4 notes + hard-copy PIAT + electronic Exam Aid Guidebook permitted' },
-  { id: 'econ-mra-b', unit: 'ECON1000', name: 'MRA · Part B', weight: 'part of 50%', due: '2026-11-05T23:00:00+08:00', dueLabel: '5 nov · 11:00pm', note: 'Final macroeconomic review + analysis · MRA 50% overall · focuses on L3–L8 · prep lecture 9 Oct' }
+  { id: 'econ-mra-b', unit: 'ECON1000', name: 'MRA · Part B', weight: '35%', due: '2026-11-05T23:00:00+08:00', dueLabel: '5 nov · 11:00pm', note: 'Final macroeconomic review + analysis · focuses on L3–L8 · all lectures/tutorials complete · use final Q&A guidance/recording' }
 ].map(item => ({ ...item, dueDate: new Date(item.due) }));
 
 const storedChecks = JSON.parse(localStorage.getItem('unitOutlineChecks') || '{}');
